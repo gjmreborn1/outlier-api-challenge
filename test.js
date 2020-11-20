@@ -54,6 +54,39 @@ tape('get data', async function (t) {
   })
 })
 
+tape('delete data', async function (t) {
+  t.test('student does not exist', async function (t) {
+    const studentId = 'randomStudentId'
+    const url = `${endpoint}/${studentId}/courses/calculus/tests`
+
+    jsonist.delete(url, null, async (err, responseData, responseObject) => {
+      if (err) t.error(err)
+
+      t.equal(responseObject.statusCode, 404)
+      t.end()
+    })
+  })
+
+  t.test('student exists', async function (t) {
+    // eslint-disable-next-line no-unused-vars
+    const { studentId, testsProperty, copy: restOfObject } =
+      await testUtils.createTestStudent()
+    const url = `${endpoint}/${studentId}/courses/calculus/tests`
+
+    jsonist.delete(url, null, async (err, responseData) => {
+      if (err) t.error(err)
+
+      t.ok(responseData.success, 'should successfully delete data')
+      const data = await fsPromises.readFile(`./data/${studentId}.json`)
+      const json = JSON.parse(data)
+      t.looseEqual(json, restOfObject)
+
+      await testUtils.deleteTestStudent()
+      t.end()
+    })
+  })
+})
+
 tape('cleanup', function (t) {
   server.close()
   t.end()

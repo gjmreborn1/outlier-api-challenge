@@ -12,6 +12,7 @@ app.use(bodyParser.json())
 
 app.put('/:studentId/*', api.storeStudentData)
 app.get('/:studentId/*', api.getStudentData)
+app.delete('/:studentId/*', api.deleteStudentData)
 
 app.use(middleware.handleError)
 app.use(middleware.notFound)

@@ -28,12 +28,13 @@ async function createTestStudent () {
       }
     }
   }
+  const copy = JSON.parse(JSON.stringify(json))
 
   json.courses.calculus.tests = testsProperty
   const jsonString = JSON.stringify(json)
   await fsPromises.writeFile(`./data/${studentId}.json`, jsonString)
 
-  return { studentId, testsProperty }
+  return { studentId, testsProperty, copy }
 }
 
 async function deleteTestStudent () {

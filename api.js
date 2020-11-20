@@ -2,7 +2,8 @@ const fs = require('fs')
 
 module.exports = {
   storeStudentData,
-  getStudentData
+  getStudentData,
+  deleteStudentData
 }
 
 const fsPromises = fs.promises
@@ -41,6 +42,37 @@ async function getStudentData (req, res, next) {
   }
 }
 
+async function deleteStudentData (req, res, next) {
+  const { studentId } = req.params
+  const properties = req.params[0].split('/')
+  const path = `./data/${studentId}.json`
+
+  try {
+    let json = await getFileJson(path)
+    deleteNestedProperty(json, properties.slice(0, -1), properties.slice(-1))
+    await storeJson(path, json)
+
+    res.json({ success: true })
+  } catch (e) {
+    res.status(404)
+    res.json({ success: false, error: e })
+  }
+}
+
+function deleteNestedProperty (json, properties, propertyToDelete) {
+  for (const property of properties) {
+    if (!json.hasOwnProperty(property)) {
+      throw new Error('Property does not exist')
+    }
+    json = json[property]
+  }
+
+  if (!json.hasOwnProperty(propertyToDelete)) {
+    throw new Error('Property does not exist')
+  }
+  json[propertyToDelete] = undefined
+}
+
 async function getFileJson (path, createIfDoesNotExist = false) {
   if (createIfDoesNotExist && !fs.existsSync(path)) {
     await fsPromises.writeFile(path, '{}')
@@ -62,6 +94,10 @@ function checkNestedProperties (json, properties) {
 function getNestedProperty (json, properties) {
   for (const property of properties) {
     json = json[property]
+  }
+
+  if (json === undefined) {
+    throw new Error('Property does not exist')
   }
   return json
 }
