@@ -11,6 +11,7 @@ const app = express()
 app.use(bodyParser.json())
 
 app.put('/:studentId/*', api.storeStudentData)
+app.get('/:studentId/*', api.getStudentData)
 
 app.use(middleware.handleError)
 app.use(middleware.notFound)
