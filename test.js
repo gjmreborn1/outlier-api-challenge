@@ -19,9 +19,8 @@ tape('store data', async function (t) {
     if (err) t.error(err)
 
     t.ok(responseData.success, 'should successfully store data in file')
-    const data = await fsPromises.readFile(`./data/${studentId}.json`)
-    const json = JSON.parse(data)
-    t.looseEqual(json.courses.calculus.tests.ab29a82, body)
+    const student = await getStudentById(studentId)
+    t.looseEqual(student.courses.calculus.tests.ab29a82, body)
 
     t.end()
   })
@@ -77,9 +76,8 @@ tape('delete data', async function (t) {
       if (err) t.error(err)
 
       t.ok(responseData.success, 'should successfully delete data')
-      const data = await fsPromises.readFile(`./data/${studentId}.json`)
-      const json = JSON.parse(data)
-      t.looseEqual(json, restOfObject)
+      const student = await getStudentById(studentId)
+      t.looseEqual(student, restOfObject)
 
       await testUtils.deleteTestStudent()
       t.end()
@@ -91,3 +89,8 @@ tape('cleanup', function (t) {
   server.close()
   t.end()
 })
+
+async function getStudentById (studentId) {
+  const data = await fsPromises.readFile(`./data/${studentId}.json`)
+  return JSON.parse(data)
+}
