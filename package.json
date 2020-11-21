@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "start": "node server.js",
+    "test": "node test.js",
+    "put_curl": "curl -X PUT -d \"{ \\\"score\\\": 98, \\\"xyz\\\": [\\\"la\\\"] }\" -H \"Content-Type:application/json\" http://localhost:1337/rn1abu8/courses/calculus/quizzes/ye0ab61",
+    "get_curl": "curl http://localhost:1337/rn1abu8/courses/calculus",
+    "delete_curl": "curl -X DELETE http://localhost:1337/rn1abu8/courses/calculus/quizzes"
   },
   "keywords": [],
   "license": "MIT",
